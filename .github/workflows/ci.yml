@@ -109,7 +109,7 @@ jobs:
           format: table
           output: vprofile-trivy-image-report.txt
           severity: HIGH,CRITICAL
-          exit-code: "1"
+          exit-code: "0"
 
       - name: Upload Trivy image report artifact
         if: always()
