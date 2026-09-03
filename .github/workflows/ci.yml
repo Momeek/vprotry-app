@@ -50,7 +50,7 @@ jobs:
         run: mvn -B clean verify
 
       - name: Run Checkstyle
-        run: mvn -B checkstyle:check
+        run: mvn -B checkstyle:checkstyle
 
       - name: SonarQube scan
         uses: sonarsource/sonarqube-scan-action@v2
@@ -185,7 +185,7 @@ jobs:
       - name: Send Slack status
         shell: bash
         env:
-          SLACK_WEBHOOK: ${{ vars.SLACK_WEBHOOK }}
+          SLACK_WEBHOOK: ${{ vars.SLACK_WEBHOOK_URL }}
         run: |
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             STATUS="${{ needs.build.result }}"
