@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: vprofile CI Pipeline
 
 on:
   pull_request:
@@ -104,7 +104,7 @@ jobs:
         uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: image
-          image-ref: ${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ steps.image-meta.outputs.image_tag }}
+          image-ref: ${{ steps.ecr-login.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:${{ steps.image-meta.outputs.image_tag }}
           format: table
           output: vprofile-trivy-image-report.txt
           severity: HIGH,CRITICAL
@@ -148,7 +148,7 @@ jobs:
       - name: Update values.yaml image and tag
         working-directory: helm-repo
         env:
-          ECR_IMAGE: ${{ needs.docker-build-push.outputs.registry }}/${{ env.ECR_REPOSITORY }}
+          ECR_IMAGE: ${{ needs.docker-build-push.outputs.registry }}/${{ vars.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ needs.docker-build-push.outputs.image_tag }}
         shell: bash
         run: |
@@ -191,7 +191,7 @@ jobs:
             MESSAGE="PR validation for ${GITHUB_REPOSITORY} on ${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}} ${STATUS}."
           elif [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
             STATUS="${{ needs.helm-update.result }}"
-            MESSAGE="Main branch deployment for ${GITHUB_REPOSITORY} completed with ${STATUS}. Image: ${{ needs.docker-build-push.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ needs.docker-build-push.outputs.image_tag }}"
+            MESSAGE="Main branch deployment for ${GITHUB_REPOSITORY} completed with ${STATUS}. Image: ${{ needs.docker-build-push.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:${{ needs.docker-build-push.outputs.image_tag }}"
           else
             STATUS="skipped"
             MESSAGE="Workflow skipped for ${GITHUB_REPOSITORY} on ${GITHUB_REF_NAME}."
